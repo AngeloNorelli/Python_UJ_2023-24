@@ -1,11 +1,16 @@
-def printFirstFromLine(line):
-    print(line.split()[0])
+def firstLetters(line):
+    result = ""
+    for word in line.split():
+        result += word[0]
+    print(result)
 
-def printLastFromLine(line):
-    length = len(line.split())
-    print(line.split()[length-1])
+def lastLetters(line):
+    result = ""
+    for word in line.split():
+        result += word[len(word)-1]
+    print(result)
 
-line = "Pierwsze slowo w linii oraz ostatnie"
+line = "Pierwsze litery slow oraz ostatnie"
 
-printFirstFromLine(line)
-printLastFromLine(line)
+firstLetters(line)
+lastLetters(line)
