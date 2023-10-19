@@ -7,7 +7,7 @@ def firstLetters(line):
 def lastLetters(line):
     result = ""
     for word in line.split():
-        result += word[len(word)-1]
+        result += word[-1]
     print(result)
 
 line = "Pierwsze litery slow oraz ostatnie"
