@@ -1,5 +1,8 @@
 def Miarka(length):
     space_between = len(str(length)) * 2
+    if space_between < 4:
+        space_between = 4
+
     x = "|"
     y = "0"
 
