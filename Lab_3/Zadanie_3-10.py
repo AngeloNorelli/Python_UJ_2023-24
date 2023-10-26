@@ -13,7 +13,7 @@ def roman2int2(roman_number):
     return fromRoman(roman_number)
 # tylko trzeba najpierw zainstalowac biblioteke 'roman'.
 
-# 
+# Funkcja konwertujaca cala liczbe z systemu rzymskiego na system arabski:
 def roman2int(roman_number):
     roman_to_arabic = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
     result = 0
