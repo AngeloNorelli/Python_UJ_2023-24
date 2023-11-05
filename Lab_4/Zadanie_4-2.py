@@ -30,7 +30,5 @@ def make_grid(rows, cols):
     result += result1
     return result
 
-result = make_ruler(10)
-print(result)
-result = make_grid(2, 4)
-print(result)
+print(make_ruler(10))
+print(make_grid(2, 4))
