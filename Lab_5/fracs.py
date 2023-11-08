@@ -1,14 +1,20 @@
 import math
 
 def simplify(frac):
-    if frac[1] < 0 and frac[0] < 0:
-        for number in frac:
-            number = number * (-1)
-    if not is_positive(frac):
-        if frac[1] < 0:
-            frac[1] *= -1
-            frac[0] *= -1
-    return [int(number/math.gcd(frac[0], frac[1])) for number in frac]
+    numerator, denominator = frac
+
+    if numerator == 0: 
+        return [0, 1]
+    
+    if denominator < 0:
+        numerator = numerator * -1
+        denominator = abs(denominator)
+
+    common_divisor = math.gcd(numerator, denominator)
+    simplified_numerator = numerator // common_divisor
+    simplified_denominator = denominator // common_divisor
+
+    return [simplified_numerator, simplified_denominator]
 
 def check_errors(frac):
     if not isinstance(frac, (list, tuple)):
@@ -22,11 +28,8 @@ def check_errors(frac):
         raise ValueError("Ulamek ma w mianowniku zero!")
 
 def add_frac(frac1, frac2):        # frac1 + frac2
-    try:
-        check_errors(frac1)
-        check_errors(frac2)
-    except ValueError as ve:
-        return ve
+    check_errors(frac1)
+    check_errors(frac2)
 
     result = []
     result.append(frac1[0]*frac2[1]+frac2[0]*frac1[1])
@@ -34,11 +37,8 @@ def add_frac(frac1, frac2):        # frac1 + frac2
     return simplify(result)
 
 def sub_frac(frac1, frac2):        # frac1 - frac2
-    try:
-        check_errors(frac1)
-        check_errors(frac2)
-    except ValueError as ve:
-        return ve
+    check_errors(frac1)
+    check_errors(frac2)
 
     result = []
     result.append(frac1[0]*frac2[1]-frac2[0]*frac1[1])
@@ -46,11 +46,8 @@ def sub_frac(frac1, frac2):        # frac1 - frac2
     return simplify(result)
 
 def mul_frac(frac1, frac2):         # frac1 * frac2
-    try:
-        check_errors(frac1)
-        check_errors(frac2)
-    except ValueError as ve:
-        return ve
+    check_errors(frac1)
+    check_errors(frac2)
 
     result = []
     result.append(frac1[0]*frac2[0])
@@ -58,11 +55,8 @@ def mul_frac(frac1, frac2):         # frac1 * frac2
     return simplify(result)
 
 def div_frac(frac1, frac2):         # frac1 / frac2
-    try:
-        check_errors(frac1)
-        check_errors(frac2)
-    except ValueError as ve:
-        return ve
+    check_errors(frac1)
+    check_errors(frac2)
 
     result = []
     result.append(frac1[0]*frac2[1])
@@ -70,39 +64,27 @@ def div_frac(frac1, frac2):         # frac1 / frac2
     return simplify(result)
 
 def is_positive(frac):              # bool, czy dodatni
-    try:
-        check_errors(frac)
-    except ValueError as ve:
-        return ve
+    check_errors(frac)
 
     frac = simplify(frac)
     return False if(frac[0]<0 or frac[1]<0) else True
 
 def is_zero(frac):                  # bool, typu [0, x]
-    try:
-        check_errors(frac)
-    except ValueError as ve:
-        return ve
+    check_errors(frac)
 
     return frac[0]==0
 
 def cmp_frac(frac1, frac2):        # -1 | 0 | +1
-    try:
-        check_errors(frac1)
-        check_errors(frac2)
-    except ValueError as ve:
-        return ve
+    check_errors(frac1)
+    check_errors(frac2)
 
     number1 = frac1[0]*frac2[1]
     number2 = frac2[0]*frac1[1]
     if number1 == number2: return 0
-    if number1 > number2: return -1
-    return 1
+    if number1 > number2: return 1
+    return -1
 
 def frac2float(frac):              # konwersja do float
-    try:
-        check_errors(frac)
-    except ValueError as ve:
-        return ve
+    check_errors(frac)
         
     return float(frac[0]/frac[1])
