@@ -1,4 +1,4 @@
-# ZADANIE 2.10
+# [ZADANIE 2.10](Zadanie_2-10.py)
 Mamy dany napis wielowierszowy line. Podać sposób obliczenia liczby wyrazów w napisie. Przez wyraz rozumiemy ciąg "czarnych" znaków, oddzielony od innych wyrazów białymi znakami (spacja, tabulacja, newline).
 
 # ZADANIE 2.11
