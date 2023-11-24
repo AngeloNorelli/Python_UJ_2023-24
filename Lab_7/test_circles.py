@@ -37,6 +37,10 @@ class TestCircle(unittest.TestCase):
         self.assertEqual(repr(self.circle2), "Circle(4.33, 4, 7)")
         self.circle3.move(10, 200.1)
         self.assertEqual(repr(self.circle3), "Circle(11, 202.1, 5.0)")
+        with self.assertRaises(ValueError):
+            self.circle1.move('a', 2)
+        with self.assertRaises(ValueError):
+            self.circle2.move(3, '2')
 
     def test_cover(self):
         covering_circle1 = self.circle2.cover(self.circle3)
