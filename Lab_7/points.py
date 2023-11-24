@@ -4,7 +4,7 @@ class Point:
     """Klasa reprezentująca punkt na płaszczyźnie."""
 
     def __init__(self, x, y):
-        if not (isinstance(x, (int, float) and isinstance(y, (int, float)))):
+        if not (isinstance(x, (int, float)) and isinstance(y, (int, float))):
             raise ValueError("Wspolrzedne punktu musza byc liczbami")
         self.x = x
         self.y = y

@@ -13,7 +13,7 @@ class Circle:
         self.radius = radius
 
     def __repr__(self):             # "Circle(x, y, radius)"
-        print(f"Circle({self.pt.x}, {self.pt.y}, {self.radius})")
+        return f"Circle({self.pt.x}, {self.pt.y}, {self.radius})"
 
     def __eq__(self, other):
         return self.pt == other.pt and self.radius == other.radius
@@ -25,7 +25,7 @@ class Circle:
         return self.radius ** 2 * math.pi
 
     def move(self, x, y):           # przesuniecie o (x, y)
-        if not (isinstance(x, (int, float) and isinstance(y, (int, float)))):
+        if not (isinstance(x, (int, float)) and isinstance(y, (int, float))):
             raise ValueError("Wspolrzedne do przesuniecia musza byc liczbami")
         self.pt = Point(self.pt.x + x, self.pt.y + y)
 
