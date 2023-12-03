@@ -11,4 +11,4 @@ Za pomocą dekoratora @property dodać atrybuty wirtualne zwracające liczbę (w
 W osobnym pliku [(test_circles.py)](test_circles.py) przygotować testy klasy Circle w formacie dla modułu 'pytest'.
 
 # Dygresja
-Do tego zadania wykorzystałem klasy zbudowane w [Lab_7](../Lab_7/)
+Do tego zadania wykorzystałem klasy zbudowane w [Lab_7](../Lab_7/README.md) w zaadaniu 7.5.
