@@ -9,3 +9,6 @@ circle = Circle.from_points((point1, point2, point3))
 Za pomocą dekoratora @property dodać atrybuty wirtualne zwracające liczbę (współrzędną): top, left, bottom, right, width, height. Dodać atrybuty wirtualne zwracające Point: topleft, bottomleft, topright, bottomright. Wymienione atrybuty wirtualne opisują prostokąt ograniczający dany okrąg (bounding box).
 
 W osobnym pliku [(test_circles.py)](test_circles.py) przygotować testy klasy Circle w formacie dla modułu 'pytest'.
+
+# Dygresja
+Do tego zadania wykorzystałem klasy zbudowane w [Lab_7](../Lab_7/)
