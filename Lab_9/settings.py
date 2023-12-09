@@ -6,8 +6,8 @@ FPS = 60
 FIELD_COLOR = (48, 39, 32)
 BG_COLOR = (24, 89, 117)
 
-SPRITE_DIR_PATH = 'Python_UJ_2023-24/Lab_9/sprites'
-FONT_PATH = 'Python_UJ_2023-24/Lab_9/font/Silkscreen-Regular.ttf'
+SPRITE_DIR_PATH = 'sprites'
+FONT_PATH = 'font/Silkscreen-Regular.ttf'
 
 ANIM_TIME_INTERVAL = 150    # milliseconds
 FAST_ANIM_TIME_INTERVAL = 15
