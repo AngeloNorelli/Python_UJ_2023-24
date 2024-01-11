@@ -6,7 +6,7 @@ import pathlib
 class StartScreen:
     def __init__(self, app):
         self.app = app
-        self.font = pg.font.Font(FONT_PATH, 36)
+        self.font = pg.font.Font(FONT_PATH, 50)
         self.title_text = self.font.render("Tetris", True, 'white')
         self.start_text = self.font.render("Press Enter to Start", True, 'white')
         self.title_rect = self.title_text.get_rect(center=(WIN_W // 2, WIN_H // 2 - 50))
@@ -22,6 +22,26 @@ class StartScreen:
         for event in pg.event.get():
             if event.type == pg.KEYDOWN and event.key == pg.K_RETURN:
                 self.app.start_game()
+            elif event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
+
+class PauseOverlay:
+    def __init__(self, app):
+        self.app = app
+        self.overlay_surface = pg.Surface(WIN_RES, pg.SRCALPHA)
+        self.overlay_surface.fill((0, 0, 0, 150))  # Kolor przyciemnienia
+        self.font = pg.font.Font(FONT_PATH, 36)
+        self.title_text = self.font.render("Paused", True, 'white')
+        self.paused_text = self.font.render("Press ESC to resume", True, 'white')
+        self.title_rect = self.title_text.get_rect(center=(WIN_W // 2, WIN_H // 2 - 50))
+        self.paused_rect = self.paused_text.get_rect(center=(WIN_W // 2, WIN_H // 2 + 50))
+
+    def draw(self):
+        self.app.screen.blit(self.overlay_surface, (0, 0))
+        self.app.screen.blit(self.title_text, self.title_rect)
+        self.app.screen.blit(self.paused_text, self.paused_rect)
+        pg.display.flip()
 
 class App:
     def __init__(self):
@@ -34,6 +54,7 @@ class App:
         self.tetris = None
         self.text = None
         self.start_screen = StartScreen(self)
+        self.paused_overlay = PauseOverlay(self)
         self.current_screen = 'start'
         self.paused = False
 
@@ -80,7 +101,7 @@ class App:
             self.tetris.draw()
             self.text.draw()
             if self.paused:
-                pass
+                self.paused_overlay.draw()
             pg.display.flip()
 
     def check_events(self):
