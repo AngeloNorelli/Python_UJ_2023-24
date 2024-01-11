@@ -1,6 +1,5 @@
 from settings import *
 from tetromino import Tetromino
-import math
 import pygame.freetype as ft
 
 class Text:
