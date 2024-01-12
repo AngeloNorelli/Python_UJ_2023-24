@@ -1,9 +1,7 @@
 from settings import *
 from tetris import Tetris, Text
 from datetime import datetime
-import sys
-import pathlib
-import requests
+import sys, pathlib, requests
 
 class StartScreen:
     def __init__(self, app):
@@ -12,13 +10,16 @@ class StartScreen:
         self.title_text = self.font.render("Tetris", True, 'white')
         self.font = pg.font.Font(FONT_PATH, 20)
         self.start_text = self.font.render("Press Enter to Start", True, 'white')
+        self.scoreboard_text = self.font.render("Press ESC to see Leaderboard", True, 'white')
         self.title_rect = self.title_text.get_rect(center=(WIN_W // 2, WIN_H // 2 - 50))
         self.start_rect = self.start_text.get_rect(center=(WIN_W // 2, WIN_H // 2 + 50))
+        self.scoreboard_rect = self.scoreboard_text.get_rect(center=(WIN_W // 2, WIN_H // 2 + 90))
 
     def draw(self):
         self.app.screen.fill(BG_COLOR)
         self.app.screen.blit(self.title_text, self.title_rect)
         self.app.screen.blit(self.start_text, self.start_rect)
+        self.app.screen.blit(self.scoreboard_text, self.scoreboard_rect)
         pg.display.flip()
 
     def check_events(self):
@@ -99,7 +100,9 @@ class Scoreboard:
     def __init__(self, app, database_url="https://tetris-ef706-default-rtdb.europe-west1.firebasedatabase.app/"):
         self.app = app
         self.database_url = database_url + "scores"
-        self.scores = []
+        self.font = pg.freetype.Font(FONT_PATH)
+        self.entering_name = False
+        self.player_name = ""
 
     def load_scores(self):
         response = requests.get(f"{self.database_url}.json")
@@ -118,14 +121,60 @@ class Scoreboard:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         new_score = {"player_name": player_name, "score": score, "timestamp": timestamp}
 
-        self.scores.append(new_score)
-        self.save_scores(self.scores)
+        scores = self.load_scores()
+        if not scores:
+            scores = [new_score]
+        else:
+            scores.append(new_score)
+
+        self.save_scores(scores)
 
     def draw(self):
-        pass
+        top_scores = self.get_top_scores()
+
+        self.app.screen.fill(BG_COLOR)
+        self.font.render_to(self.app.screen, (50, 50), "Top Scores:", fgcolor='green', size=50)
+
+        for i, score in enumerate(top_scores):
+            player_name = score.get("player_name", "Unknown")
+            score_value = score.get("score", 0)
+            timestamp = score.get("timestamp", "N/A")
+
+            score_text = f"  {i + 1}. {player_name}: {score_value} ({timestamp})"
+            self.font.render_to(self.app.screen, (50, 100 + (1 + i) * 25),
+                                score_text, fgcolor='gray', size=20)
+            
+        if(self.app.tetris is not None and self.app.tetris.gameover):
+            if not self.entering_name:
+                self.font.render_to(self.app.screen, (50, 500), "Press Enter to submit your score.", fgcolor='yellow', size=20)
+            else:
+                input_text = f"Enter your name: {self.player_name}"
+                self.font.render_to(self.app.screen, (50, 500), input_text, fgcolor='yellow', size=20)
+
+        pg.display.flip()
 
     def check_events(self):
-        pass
+        for event in pg.event.get():
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    self.app.current_screen = 'start'
+                elif event.key == pg.K_RETURN:
+                    if(self.app.tetris is not None and self.app.tetris.gameover):
+                        if not self.entering_name:
+                            self.entering_name = True
+                        else:
+                            self.player_name = ""
+                            self.entering_name = False
+                            self.add_score(self.player_name, self.app.tetris.score)
+                            self.app.current_screen = 'start'
+                elif event.key == pg.K_BACKSPACE and self.entering_name:
+                    if len(self.player_name) > 0:
+                        self.player_name = self.player_name[:-1]
+                elif self.entering_name:
+                    self.player_name += chr(event.key)
+            elif event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
 
 class App:
     def __init__(self):
@@ -215,6 +264,8 @@ class App:
                     self.fast_anim_trigger = True
         elif self.current_screen == 'gameover':
             self.gameover.check_events()
+        else:
+            self.scoreboard.check_events()
     
     def run(self):
         while True:

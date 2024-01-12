@@ -29,6 +29,7 @@ class Tetris:
         self.tetromino = Tetromino(self)
         self.next_tetromino = Tetromino(self, current=False)
         self.speed_up = False
+        self.gameover = False
 
         self.score = 0
         self.full_lines = 0
@@ -72,6 +73,7 @@ class Tetris:
     def check_tetromino_landing(self):
         if self.tetromino.landing:
             if self.is_game_over():
+                self.gameover = True
                 self.app.current_screen = 'gameover'
             else:
                 self.speed_up = False
