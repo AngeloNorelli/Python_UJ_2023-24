@@ -72,7 +72,7 @@ class Tetris:
     def check_tetromino_landing(self):
         if self.tetromino.landing:
             if self.is_game_over():
-                self.__init__(self.app)
+                self.app.current_screen = 'gameover'
             else:
                 self.speed_up = False
                 self.put_tetromino_blocks_in_array()

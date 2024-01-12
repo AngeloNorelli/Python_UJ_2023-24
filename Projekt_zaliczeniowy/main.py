@@ -8,6 +8,7 @@ class StartScreen:
         self.app = app
         self.font = pg.font.Font(FONT_PATH, 50)
         self.title_text = self.font.render("Tetris", True, 'white')
+        self.font = pg.font.Font(FONT_PATH, 20)
         self.start_text = self.font.render("Press Enter to Start", True, 'white')
         self.title_rect = self.title_text.get_rect(center=(WIN_W // 2, WIN_H // 2 - 50))
         self.start_rect = self.start_text.get_rect(center=(WIN_W // 2, WIN_H // 2 + 50))
@@ -30,7 +31,7 @@ class PauseOverlay:
     def __init__(self, app):
         self.app = app
         self.overlay_surface = pg.Surface(WIN_RES, pg.SRCALPHA)
-        self.overlay_surface.fill((0, 0, 0, 150))  # Kolor przyciemnienia
+        self.overlay_surface.fill((0, 0, 0, 150))
         self.font = pg.font.Font(FONT_PATH, 36)
         self.title_text = self.font.render("Paused", True, 'white')
         self.paused_text = self.font.render("Press ESC to resume", True, 'white')
@@ -42,6 +43,52 @@ class PauseOverlay:
         self.app.screen.blit(self.title_text, self.title_rect)
         self.app.screen.blit(self.paused_text, self.paused_rect)
         pg.display.flip()
+
+class GameOver:
+    def __init__(self, app):
+        self.app = app
+        
+        self.font = pg.font.Font(FONT_PATH, 50)
+        self.title_text = self.font.render("Game Over!", True, 'red')
+        self.title_rect = self.title_text.get_rect(center=(WIN_W // 2, WIN_H // 2 - 200))
+        
+        self.font = pg.font.Font(FONT_PATH, 20)
+        self.back_text = self.font.render("Press ESC", True, 'white')
+        self.back_text_1 = self.font.render("to go back to menu", True, 'white')
+        self.back_rect = self.back_text.get_rect(center=(WIN_W // 2, WIN_H // 2 - 25))
+        self.back_rect_1 = self.back_text_1.get_rect(center=(WIN_W // 2, WIN_H // 2))
+        
+        self.leaderboard_text = self.font.render("Pres Enter", True, 'white')
+        self.leaderboard_text_1 = self.font.render("to inseert your score in the leaderboard", True, 'white')
+        self.leaderboard_rect = self.leaderboard_text.get_rect(center=(WIN_W // 2, WIN_H // 2 + 75))
+        self.leaderboard_rect_1 = self.leaderboard_text_1.get_rect(center=(WIN_W // 2, WIN_H // 2 + 100))
+
+    def draw(self):
+        self.app.screen.fill(BG_COLOR)
+
+        self.font = pg.font.Font(FONT_PATH, 50)
+        score_text = self.font.render(f"Your score: {self.app.tetris.score}", True, 'yellow')
+        score_rect = score_text.get_rect(center=(WIN_W // 2, WIN_H // 2 - 100))
+
+        self.app.screen.blit(self.title_text, self.title_rect)
+        self.app.screen.blit(score_text, score_rect)
+        self.app.screen.blit(self.back_text, self.back_rect)
+        self.app.screen.blit(self.back_text_1, self.back_rect_1)
+        self.app.screen.blit(self.leaderboard_text, self.leaderboard_rect)
+        self.app.screen.blit(self.leaderboard_text_1, self.leaderboard_rect_1)
+        
+        pg.display.flip()
+
+    def check_events(self):
+        for event in pg.event.get():
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    self.app.current_screen = 'start'
+                elif event.key == pg.K_RETURN:
+                    pass
+            elif event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
 
 class App:
     def __init__(self):
@@ -55,6 +102,7 @@ class App:
         self.text = None
         self.start_screen = StartScreen(self)
         self.paused_overlay = PauseOverlay(self)
+        self.gameover = GameOver(self)
         self.current_screen = 'start'
         self.paused = False
 
@@ -103,6 +151,8 @@ class App:
             if self.paused:
                 self.paused_overlay.draw()
             pg.display.flip()
+        else:
+            self.gameover.draw()
 
     def check_events(self):
         if self.current_screen == 'start':
@@ -123,6 +173,8 @@ class App:
                     self.anim_trigger = True
                 elif event.type == self.fast_user_event:
                     self.fast_anim_trigger = True
+        else:
+            self.gameover.check_events()
     
     def run(self):
         while True:
