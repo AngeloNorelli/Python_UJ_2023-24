@@ -1,7 +1,9 @@
 from settings import *
 from tetris import Tetris, Text
+from datetime import datetime
 import sys
 import pathlib
+import requests
 
 class StartScreen:
     def __init__(self, app):
@@ -21,8 +23,11 @@ class StartScreen:
 
     def check_events(self):
         for event in pg.event.get():
-            if event.type == pg.KEYDOWN and event.key == pg.K_RETURN:
-                self.app.start_game()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_RETURN:
+                    self.app.start_game()
+                elif event.key == pg.K_ESCAPE:
+                    self.app.current_screen = 'scoreboard'
             elif event.type == pg.QUIT:
                     pg.quit()
                     sys.exit()
@@ -48,7 +53,7 @@ class GameOver:
     def __init__(self, app):
         self.app = app
         
-        self.font = pg.font.Font(FONT_PATH, 50)
+        self.font = pg.font.Font(FONT_PATH, 70)
         self.title_text = self.font.render("Game Over!", True, 'red')
         self.title_rect = self.title_text.get_rect(center=(WIN_W // 2, WIN_H // 2 - 200))
         
@@ -85,10 +90,42 @@ class GameOver:
                 if event.key == pg.K_ESCAPE:
                     self.app.current_screen = 'start'
                 elif event.key == pg.K_RETURN:
-                    pass
+                    self.app.current_screen = 'scoreboard'
             elif event.type == pg.QUIT:
                     pg.quit()
                     sys.exit()
+
+class Scoreboard:
+    def __init__(self, app, database_url="https://tetris-ef706-default-rtdb.europe-west1.firebasedatabase.app/"):
+        self.app = app
+        self.database_url = database_url + "scores"
+        self.scores = []
+
+    def load_scores(self):
+        response = requests.get(f"{self.database_url}.json")
+        scores = response.json()
+        return scores or []
+    
+    def get_top_scores(self, num=10):
+        scores = self.load_scores()
+        sorted_scores = sorted(scores, key=lambda x: x["score"], reverse=True)
+        return sorted_scores[:num]
+
+    def save_scores(self, scores):
+        requests.put(f"{self.database_url}.json", json=scores)
+
+    def add_score(self, player_name, score):
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        new_score = {"player_name": player_name, "score": score, "timestamp": timestamp}
+
+        self.scores.append(new_score)
+        self.save_scores(self.scores)
+
+    def draw(self):
+        pass
+
+    def check_events(self):
+        pass
 
 class App:
     def __init__(self):
@@ -103,6 +140,7 @@ class App:
         self.start_screen = StartScreen(self)
         self.paused_overlay = PauseOverlay(self)
         self.gameover = GameOver(self)
+        self.scoreboard = Scoreboard(self)
         self.current_screen = 'start'
         self.paused = False
 
@@ -151,8 +189,10 @@ class App:
             if self.paused:
                 self.paused_overlay.draw()
             pg.display.flip()
-        else:
+        elif self.current_screen == 'gameover':
             self.gameover.draw()
+        else:
+            self.scoreboard.draw()
 
     def check_events(self):
         if self.current_screen == 'start':
@@ -173,7 +213,7 @@ class App:
                     self.anim_trigger = True
                 elif event.type == self.fast_user_event:
                     self.fast_anim_trigger = True
-        else:
+        elif self.current_screen == 'gameover':
             self.gameover.check_events()
     
     def run(self):
