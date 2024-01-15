@@ -170,7 +170,7 @@ class Scoreboard:
                 elif event.key == pg.K_BACKSPACE and self.entering_name:
                     if len(self.player_name) > 0:
                         self.player_name = self.player_name[:-1]
-                elif self.entering_name:
+                elif self.entering_name and event.key != pg.K_LSHIFT and event.key != pg.K_RSHIFT:
                     self.player_name += chr(event.key)
             elif event.type == pg.QUIT:
                     pg.quit()
