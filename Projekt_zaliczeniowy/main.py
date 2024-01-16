@@ -90,6 +90,8 @@ class GameOver:
         for event in pg.event.get():
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
+                    if self.app.tetris:
+                        self.app.tetris.gameover = False
                     self.app.current_screen = 'start'
                 elif event.key == pg.K_RETURN:
                     self.app.current_screen = 'scoreboard'
@@ -158,15 +160,16 @@ class Scoreboard:
         for event in pg.event.get():
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
+                    self.app.entering_name = False
                     self.app.current_screen = 'start'
                 elif event.key == pg.K_RETURN:
                     if(self.app.tetris is not None and self.app.tetris.gameover):
                         if not self.entering_name:
                             self.entering_name = True
                         else:
+                            self.add_score(self.player_name, self.app.tetris.score)
                             self.player_name = ""
                             self.entering_name = False
-                            self.add_score(self.player_name, self.app.tetris.score)
                             self.app.current_screen = 'start'
                 elif event.key == pg.K_BACKSPACE and self.entering_name:
                     if len(self.player_name) > 0:
