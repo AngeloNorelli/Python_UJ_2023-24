@@ -71,7 +71,7 @@ class Block(pg.sprite.Sprite):
         pass                                # wchodzi w kolizję z innymi obiektami
 ```
 
-Klasa Tetromino odpowiada za sterowanie wszystkimi bloczkami (obiektami Block) w figurze obecnie sterowanej:
+Klasa Tetromino odpowiada za sterowanie wszystkimi bloczkami (obiektami Block) w figurze, która obecnie spada. <br>Figury, zapisane w słowniku w pliku [settings.py](settings.py) są tu wykorzystywane i są zapisane specjalnie w odniesieniu do bloczka centralnego. Pomaga to w obrocie figurą:
 
 ```python
 # ... powyższy kod klasy Block
@@ -127,24 +127,148 @@ class Tetris:
     def put_tetromino_blocks_in_array(self):    # Wrzucenie bloczków tetromina
         pass                                    # do tablicy.
 
-    def get_field_array(self):
-        pass
+    def get_field_array(self):                  # Funkcja generująca psustą tablicę
+        pass                                    # odzwierciedlającą siatkę. planszy
     
-    def is_game_over(self):
-        pass
+    def is_game_over(self):                     # Sprawdzenie czy gra się zakończyła
+        if self.tetromino.blocks[0].pos.y == INIT_POS_OFFSET[1]:
+            pg.time.wait(300)                   # sprawdzając czy blok został na
+            return True                         # pozycji początkowej
 
-    def check_tetromino_landing(self):
-        pass
+    def check_tetromino_landing(self):          # Przygotowanie planszy
+        if self.tetromino.landing:              # w zależności czy to jest koniec gry,
+            if self.is_game_over():             # czy po prostu bloczek wylądował.
+                self.gameover = True
+                self.app.current_screen = 'gameover'
+            else:
+                self.speed_up = False
+                self.put_tetromino_blocks_in_array()
+                self.next_tetromino.current = True
+                self.tetromino = self.next_tetromino
+                self.next_tetromino = Tetromino(self, current=False)
 
-    def control(self, pressed_key):
-        pass
+    def control(self, pressed_key):             # Obłsuga klawiszy strzałek,
+        pass                                    # ruch tetromino w wybrany kierunek.
 
-    def draw_grid(self):
-        pass
+    def draw_grid(self):                        # Rysowanie kratownicy,
+        pass                                    # by kolor nie zlewał różne kafelki.
     
-    def update(self):
+    def update(self):                           # Aktualizowanie gry, sprawdzanie
+        pass                                    # czy są pełne linie pobieranie wyniku,
+                                                # aktualizowanie tetromina.
+
+    def draw(self):                             # Funkcja wywołująca rysowanie
+        pass                                    # kratownicy oraz spritów na ekranie.
+```
+
+### Plik [main.py](main.py)
+W tym oto pliku znajduje się pięć klas związanych z opsługą wyświetlanego ekranu.<br>
+
+Klasa ekranu startowego:
+```python
+from settings import *
+from tetris import Tetris, Text
+from datetime import datetime
+import sys, pathlib, requests
+import string
+
+class StartScreen:                  
+    def __init__(self, app):            # Inicjalizacja obiektu tej klasy,
+        pass                            # tworzenie napisów i ich położenie.
+
+    def draw(self):                     # Rozrysowanie tekstów na ekranie.
         pass
 
-    def draw(self):
+    def check_events(self):             # Sprawdzanie inputu użytkownika,
+        pass                            # obsługa eventów.
+```
+
+Klasa ekranu pauzy:
+```python
+class PauseOverlay:
+    def __init__(self, app):            # Inicjalizacja obiektu tej klasy,
+        pass                            # ustawienie kanału alpha oraz napisów.
+
+    def draw(self):                     # Rozrysowanie tekstów na ekranie
+        pass                            # oraz przyciemnienie ekranu.
+```
+
+Klasa ekranu zakończenia rozgrywki:
+```python
+class GameOver:
+    def __init__(self, app):            # Inicjalizacja obiektu,
+        pass                            # ustawienie napisów.
+
+    def draw(self):                     # Pobranie wyniku z gry oraz
+        pass                            # wyświetlenie go z pozostałymi .napisami.
+
+    def check_events(self):             # Kierowanie zdarzeniami, przeniesienie
+        pass                            # do tabeli wyników lub menu głównego.
+```
+
+Klasa ekranu wyników globalnych:
+```python
+class Scoreboard:
+    def __init__(self, app, database_url="adres"):  # Inicjalizacja ekranu, sztywnie
+        pass                                        # wpisany adres bazy danych.
+
+    def load_scores(self):                          # Zwraca bazę danych, nie
+        pass                                        # jest ona uporządkowana.
+    
+    def get_top_scores(self, num=10):               # Zwraca najlepsze 10 wyników
+        pass                                        # używając load_scores().
+
+    def save_scores(self, scores):                  # Wysłanie lokalnej bazy
+        pass                                        # na stronę.
+
+    def add_score(self, player_name, score):        # Pobranie wyników z bazy
+        pass                                        # oraz dodanie nowego wyniku.
+
+    def draw(self):                                 # Wypisanie 10 najlepszych
+        pass                                        # wyników jeden pod drugim.
+
+    def check_events(self):                         # Obsługa wejścia klawiatury
+        pass                                        # użytkownika, czy podaje nazwę,
+                                                    # czy wychodzi do innego ekranu.
+```
+
+Klasa App, w niej zawiera się główna pętla uruchamiana oraz obsługa obecnie wyświetlanego ekranu:
+```python
+class App:
+    def __init__(self):                 # Inicjalizacja obiektu, ustawienie zegara
+        pass                            # gry, załadowanie obrazów, itp.
+                                        # tworzenie obiektów ekranów i ustawienie
+                                        # obecnego ekranu na ekran startowy.
+
+    def load_images(self):              # Pobranie z folderu sprites obrazów dla
+        pass                            # bloczków i zwrócenie je jako wynik.
+
+    def set_timer(self):                # Przygotowanie wszystkich timerów,
+        pass                            # tick zwykłego i przyspieszonego
+                                        # zegara, zmienne przyspieszenia.
+
+    def start_game(self):               # Tworzenie obiektów klasy Tetris oraz Text,
+        pass                            # ustawienie obecnie ekranu na ekran gry.
+
+    def toggle_pause(self):             # Funkcja wywołująca/odwołująca pauzę; polega
+        pass                            # ona na ustawieniu tikania zegara na 0.
+
+    def update(self):                   # Aktualizacja okna rogrywki, jak nie jest
+        pass                            # zatrzymana, aktualizuję obiekt tetris.
+
+    def draw(self):                     # Wyświetlenie obecnie obsługiwanego ekranu.
         pass
+
+    def check_events(self):             # Obsługa zdażeń w zależności od
+        pass                            # obecnie wyświetlanego ekranu.
+    
+    def run(self):                      # Główna pętla programu,
+        while True:                     
+            self.check_events()         # wywołuje sprawdzenie wydarzeń,
+            self.update()               # zaktualizowaniu obecnego stanu
+            self.draw()                 # oraz wyświetlenie aktualnego obrazu.
+
+if __name__ == '__main__':              # Kod umożliwiający 
+    app = App()                         # stworzenie obiektu klasy App
+    app.run()                           # oraz wywołanie głównej pętli gry.
 ```
